@@ -7,9 +7,12 @@ import lombok.Data;
 @Table(name = "user_address")
 @Data
 public class Address {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String address;
     private String city;
+    @Column(name = "postal_cod")
     private String postalCod;
     private String country;
     private String telephone;

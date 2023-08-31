@@ -16,8 +16,8 @@ public class Item {
     private Integer quantity;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Detail order;
-    @OneToOne(mappedBy = "orderItems", fetch = FetchType.LAZY)
+    private Detail orderDetail;
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 }

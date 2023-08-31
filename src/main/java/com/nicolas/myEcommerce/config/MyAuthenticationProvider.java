@@ -4,6 +4,7 @@ import com.nicolas.myEcommerce.model.user.Authority;
 import com.nicolas.myEcommerce.model.user.User;
 import com.nicolas.myEcommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,7 +27,6 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
     private UserRepository repository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();

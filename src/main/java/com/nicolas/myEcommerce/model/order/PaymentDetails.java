@@ -11,7 +11,6 @@ public class PaymentDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double amount;
-    @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
+    @OneToOne(mappedBy = "paymentDetails", fetch = FetchType.LAZY)
     private Detail orderDetail;
 }

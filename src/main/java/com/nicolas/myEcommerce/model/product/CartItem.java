@@ -14,7 +14,7 @@ public class CartItem {
     private Long id;
     private Integer quantity;
     private Date createdAt;
-    @OneToOne(mappedBy = "cartItem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "product_id")
     private Product product;
 }

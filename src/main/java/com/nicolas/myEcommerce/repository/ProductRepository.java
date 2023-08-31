@@ -1,6 +1,8 @@
 package com.nicolas.myEcommerce.repository;
 
+import com.nicolas.myEcommerce.model.order.Item;
 import com.nicolas.myEcommerce.model.product.Category;
+import com.nicolas.myEcommerce.model.product.Discount;
 import com.nicolas.myEcommerce.model.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p where p.price > :startPrice and p.price < :endPrice")
     Page<Product> findByPriceGreaterThanLessThan(@Param("startPrice")Double startPrice,@Param("endPrice") Double endPrice ,Pageable pageable);
     Optional<Category> findCategoryByName(String name);
+    Optional<Discount> findDiscountByName(String name);
+    Optional<Item> findItemByName(String name);
 }

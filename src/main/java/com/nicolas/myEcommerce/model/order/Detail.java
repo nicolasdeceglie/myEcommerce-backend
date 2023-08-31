@@ -14,12 +14,12 @@ public class Detail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double total;
-    @OneToOne(mappedBy = "orderDetail", cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToOne(mappedBy = "orderDetail", cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "payment_id")
-    private PaymentDetails payment;
+    private PaymentDetails paymentDetails;
     @OneToMany(mappedBy = "orderDetail", cascade = CascadeType.REMOVE)
     private List<Item> orderItems;
 }

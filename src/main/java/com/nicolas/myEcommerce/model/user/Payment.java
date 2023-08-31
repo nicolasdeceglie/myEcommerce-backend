@@ -7,6 +7,8 @@ import lombok.Data;
 @Table(name = "user_payment")
 @Data
 public class Payment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String paymentType;
     @ManyToOne(fetch = FetchType.LAZY)
