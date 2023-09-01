@@ -55,13 +55,23 @@ public class ProductService {
         Product product = repository.save(modelMapper.map(productDTO, Product.class));
         return modelMapper.map(product, ProductDTO.class);
     }
-
     private String saveImageToStorage(byte[] imageBytes, String fileName) throws IOException {
         Path imagesDirectory = Paths.get("/Users/nicolasdeceglie/Desktop/images");
         Path imagePath = imagesDirectory.resolve(fileName);
         Files.write(imagePath, imageBytes);
         return fileName;
     }
+    private byte[] getImageFromStorage(String fileName) throws IOException {
+        Path imagesDirectory = Paths.get("/Users/nicolasdeceglie/Desktop/images");
+        Path imagePath = imagesDirectory.resolve(fileName);
+        return Files.readAllBytes(imagePath);
+    }
+    private void deleteImageFromStorage(String fileName) throws IOException {
+        Path imagesDirectory = Paths.get("/Users/nicolasdeceglie/Desktop/images");
+        Path imagePath = imagesDirectory.resolve(fileName);
+        Files.delete(imagePath);
+    }
+    @Transactional
     public ProductDTO createProductWithoutImage(ProductDTO productDTO) {
         Product productToSave = modelMapper.map(productDTO, Product.class);
         productToSave.setCreatedAt(new Date(System.currentTimeMillis()));
@@ -77,4 +87,28 @@ public class ProductService {
         productToSave = repository.save(productToSave);
         return modelMapper.map(productToSave, ProductDTO.class);
     }
+    @Transactional
+    public ProductDTO update(ProductDTO productToUpdate, long id) {
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new IdNotFoundException("Product with ID " + id + " not found"));
+        product.setName(productToUpdate.getName());
+        product.setPrice(productToUpdate.getPrice());
+        product.setQuantity(productToUpdate.getQuantity());
+        product.setUpdatedAt(new Date(System.currentTimeMillis()));
+        product = repository.save(product);
+        return modelMapper.map(product, ProductDTO.class);
+    }
+    @Transactional
+    public ProductDTO delete(long id) {
+        ProductDTO productToDelete = getById(id);
+        try {
+            deleteImageFromStorage(productToDelete.getImage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        repository.deleteById(productToDelete.getId());
+        return productToDelete;
+    }
+
+
 }

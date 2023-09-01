@@ -18,5 +18,4 @@ public class UserDTO {
     private String createDate;
     @JsonIgnore
     private List<String> authorities;
-
 }

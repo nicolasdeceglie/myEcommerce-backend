@@ -20,6 +20,7 @@ public class Product {
     private boolean isAvailable;
     private Integer quantity;
     private Date createdAt;
+    private Date updatedAt;
     @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Item orderItems;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

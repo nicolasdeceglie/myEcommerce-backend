@@ -29,11 +29,11 @@ public class UserService {
         userToRegister.setPassword(hashpwd);
         userToRegister.setCreateDate(String.valueOf(new Date(System.currentTimeMillis())));
         User savedUser = modelMapper.map(userToRegister, User.class);
-        savedUser =  repository.save(savedUser);
+        repository.save(savedUser);
         return modelMapper.map(savedUser, UserDTO.class);
     }
 
-    List<UserDTO> findAll(int pageIndex) {
+    public List<UserDTO> findAll(int pageIndex) {
         final int pageSize = 10;
         Page<User> users = repository.findAll(PageRequest.of(pageIndex, pageSize));
         return users.map(user -> modelMapper.map(user,  UserDTO.class)).toList();
@@ -42,17 +42,23 @@ public class UserService {
         return modelMapper.map(repository.findByEmail(email).orElseThrow(() -> new BadCredentialsException("User not found")), UserDTO.class);
     }
     @Transactional
-    UserDTO update(User userToUpdate, long id){
+    public UserDTO update(UserDTO userToUpdate, long id){
         User user = repository.findById(id).orElseThrow(() -> new UsernameNotFoundException("id non valido"));
         user.setId(userToUpdate.getId());
-        user = repository.save(userToUpdate);
+        user = repository.save(user);
         return  modelMapper.map(user, UserDTO.class);
     }
-   /* @Transactional
-    public UserDTO save(UserDTO userToUpdate){
-        User user = modelMapper.map(userToUpdate, User.class);
-        user = repository.save(user);
+
+    @Transactional
+    public UserDTO delete(long id){
+        User user = repository.findById(id).orElseThrow(() -> new UsernameNotFoundException("id non valido"));
+        repository.delete(user);
         return modelMapper.map(user, UserDTO.class);
-    }*/
+    }
+
+    public UserDTO getById(long id){
+        User user = repository.findById(id).orElseThrow(() -> new UsernameNotFoundException("id non valido"));
+        return modelMapper.map(user, UserDTO.class);
+    }
 
 }
