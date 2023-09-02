@@ -67,4 +67,15 @@ public class UserService {
         User user = findById(id);
         return modelMapper.map(user, UserDTO.class);
     }
+
+    public String getAddressByUser(long userId) {
+        User user = findById(userId);
+        return user.getAddressList().toString();
+    }
+
+    public String getPhoneByUser(long userId) {
+        User user = findById(userId);
+        return user.getPhoneNumber().toString();
+    }
+
 }

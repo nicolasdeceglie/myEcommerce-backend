@@ -10,6 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class OrderService {
@@ -83,5 +86,12 @@ public class OrderService {
     public OrderDTO findByUserAndIdAndOrderItemsId(Long userId, Long id, Long itemId) {
         Order order = orderRepository.findByUserAndIdAndOrderItemsId(userId, id, itemId);
         return modelMapper.map(order, OrderDTO.class);
+    }
+
+    public List<OrderDTO> findAll() {
+        return orderRepository.findAll()
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDTO.class))
+                .collect(Collectors.toList());
     }
 }

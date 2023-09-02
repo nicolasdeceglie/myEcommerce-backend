@@ -14,10 +14,15 @@ public class ProductDTO {
     private String name;
     private String description;
     private Double price;
-    private String image;
+    private String imageUrl;
+    private String imageName;
     private boolean isAvailable;
     private Integer quantity;
     private Date createdAt;
     private Long categoryId;
     private Long discountId;
+    private String categoryName;
+    private String discountName;
+    private Double discountPercent;
+
 }

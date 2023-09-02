@@ -13,6 +13,8 @@ public class OrderDTO {
     private Long id;
     private Double total;
     private UserDTO user;
+    private List<ProductDTO> products;
     private PaymentDetailsDTO paymentDetails;
-    private List<ItemDTO> orderItems;
+    private String userAddress;
+    private String userPhoneNumber;
 }
