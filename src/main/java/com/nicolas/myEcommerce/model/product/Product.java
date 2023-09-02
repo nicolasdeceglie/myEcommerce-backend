@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -16,11 +17,12 @@ public class Product {
     private String name;
     private String description;
     private Double price;
-    private String image;
     private boolean isAvailable;
     private Integer quantity;
     private Date createdAt;
     private Date updatedAt;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Image> images;
     @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Item orderItems;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

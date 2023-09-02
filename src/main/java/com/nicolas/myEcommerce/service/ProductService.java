@@ -2,6 +2,7 @@ package com.nicolas.myEcommerce.service;
 
 import com.nicolas.myEcommerce.dto.ProductDTO;
 import com.nicolas.myEcommerce.exception.IdNotFoundException;
+import com.nicolas.myEcommerce.model.product.Image;
 import com.nicolas.myEcommerce.model.product.Product;
 import com.nicolas.myEcommerce.repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -46,30 +47,47 @@ public class ProductService {
                 .orElseThrow(() -> new IdNotFoundException("Product with ID " + id + " not found"));
         return modelMapper.map(product, ProductDTO.class);
     }
+
     @Transactional
-    public ProductDTO createProductWithImage(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
-        byte[] imageBytes = imageFile.getBytes();
-        String imageId = saveImageToStorage(imageBytes, imageFile.getOriginalFilename());
-        productDTO.setImage(imageId);
-        productDTO.setCreatedAt(new Date(System.currentTimeMillis()));
-        Product product = repository.save(modelMapper.map(productDTO, Product.class));
+    public ProductDTO createProductWithImage(ProductDTO productDTO, MultipartFile imageFile) {
+        Product product = modelMapper.map(productDTO, Product.class);
+        product = save(imageFile, product);
         return modelMapper.map(product, ProductDTO.class);
     }
-    private String saveImageToStorage(byte[] imageBytes, String fileName) throws IOException {
-        Path imagesDirectory = Paths.get("/Users/nicolasdeceglie/Desktop/images");
-        Path imagePath = imagesDirectory.resolve(fileName);
-        Files.write(imagePath, imageBytes);
+    String saveImageToStorage(byte[] imageBytes, String fileName) {
+        try{
+            Path imagesDirectory = Paths.get("/Users/nicolasdeceglie/Desktop/images");
+            Path imagePath = imagesDirectory.resolve(fileName);
+            Files.write(imagePath, imageBytes);
+        }catch (IOException e){
+            System.out.println("Exception occurred due to " + e.getMessage());
+        }
         return fileName;
     }
-    private byte[] getImageFromStorage(String fileName) throws IOException {
-        Path imagesDirectory = Paths.get("/Users/nicolasdeceglie/Desktop/images");
-        Path imagePath = imagesDirectory.resolve(fileName);
-        return Files.readAllBytes(imagePath);
+    void deleteImageFromStorage(String fileName) {
+        try{
+            Path imagesDirectory = Paths.get("/Users/nicolasdeceglie/Desktop/images");
+            Path imagePath = imagesDirectory.resolve(fileName);
+            Files.delete(imagePath);
+        }catch (IOException e){
+            System.out.println("Exception occurred due to " + e.getMessage());
+        }
     }
-    private void deleteImageFromStorage(String fileName) throws IOException {
-        Path imagesDirectory = Paths.get("/Users/nicolasdeceglie/Desktop/images");
-        Path imagePath = imagesDirectory.resolve(fileName);
-        Files.delete(imagePath);
+    private Product save(MultipartFile imageFile, Product productToSave) {
+        Image image = new Image();
+        try {
+            String imageID = saveImageToStorage(imageFile.getBytes(), imageFile.getOriginalFilename());
+            image.setUrl(imageID);
+            image.setName(imageFile.getOriginalFilename());
+            image.setProduct(productToSave);
+
+            productToSave.getImages().add(image);
+            productToSave.setUpdatedAt(new Date(System.currentTimeMillis()));
+            productToSave = repository.save(productToSave);
+        } catch (IOException e) {
+            System.out.println("Exception occurred due to " + e.getMessage());
+        }
+        return productToSave;
     }
     @Transactional
     public ProductDTO createProductWithoutImage(ProductDTO productDTO) {
@@ -79,21 +97,20 @@ public class ProductService {
         return modelMapper.map(productToSave, ProductDTO.class);
     }
     @Transactional
-    public ProductDTO uploadImage(MultipartFile imageFile) throws IOException {
-        String imageID = saveImageToStorage(imageFile.getBytes(), imageFile.getOriginalFilename());
-        Product productToSave = new Product();
-        productToSave.setImage(imageID);
-        productToSave.setCreatedAt(new Date(System.currentTimeMillis()));
-        productToSave = repository.save(productToSave);
+    public ProductDTO uploadImage(MultipartFile imageFile, long id) {
+        if (getById(id) == null) {
+            throw new IdNotFoundException("Product with ID " + id + " not found");
+        }
+        Product productToSave = modelMapper.map(getById(id), Product.class);
+        productToSave = save(imageFile, productToSave);
         return modelMapper.map(productToSave, ProductDTO.class);
     }
     @Transactional
     public ProductDTO update(ProductDTO productToUpdate, long id) {
-        Product product = repository.findById(id)
-                .orElseThrow(() -> new IdNotFoundException("Product with ID " + id + " not found"));
-        product.setName(productToUpdate.getName());
-        product.setPrice(productToUpdate.getPrice());
-        product.setQuantity(productToUpdate.getQuantity());
+        if (getById(id) == null) {
+            throw new IdNotFoundException("Product with ID " + id + " not found");
+        }
+        Product product = modelMapper.map(productToUpdate, Product.class);
         product.setUpdatedAt(new Date(System.currentTimeMillis()));
         product = repository.save(product);
         return modelMapper.map(product, ProductDTO.class);
@@ -101,14 +118,8 @@ public class ProductService {
     @Transactional
     public ProductDTO delete(long id) {
         ProductDTO productToDelete = getById(id);
-        try {
-            deleteImageFromStorage(productToDelete.getImage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         repository.deleteById(productToDelete.getId());
+        deleteImageFromStorage(productToDelete.getImage());
         return productToDelete;
     }
-
-
 }

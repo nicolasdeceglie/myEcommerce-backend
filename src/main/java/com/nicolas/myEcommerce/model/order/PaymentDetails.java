@@ -12,5 +12,5 @@ public class PaymentDetails {
     private Long id;
     private Double amount;
     @OneToOne(mappedBy = "paymentDetails", fetch = FetchType.LAZY)
-    private Detail orderDetail;
+    private Order order;
 }

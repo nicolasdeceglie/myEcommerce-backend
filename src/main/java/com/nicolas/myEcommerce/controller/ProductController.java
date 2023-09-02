@@ -1,5 +1,6 @@
 package com.nicolas.myEcommerce.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicolas.myEcommerce.dto.ProductDTO;
 import com.nicolas.myEcommerce.service.ProductService;
@@ -36,8 +37,8 @@ public class ProductController {
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<?> create(@RequestParam("product") String productJson, @RequestParam("image")MultipartFile imageFIle) {
-        try {
+    ResponseEntity<?> create(@RequestParam("product") String productJson, @RequestParam("image")MultipartFile imageFIle)  {
+        try{
             ObjectMapper objectMapper = new ObjectMapper();
             ProductDTO productDTO = objectMapper.readValue(productJson, ProductDTO.class);
             if (imageFIle.isEmpty()){
@@ -46,7 +47,7 @@ public class ProductController {
                 productDTO = productService.createProductWithImage(productDTO, imageFIle);
             }
             return ResponseEntity.ok(productDTO);
-        }catch (Exception e){
+        }catch (JsonProcessingException e){
             System.out.println("Exception occurred due to " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating product with image");
         }
@@ -64,15 +65,11 @@ public class ProductController {
 
     @PostMapping("/upload-image")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile imageFile){
-        try{
-            if (imageFile.isEmpty()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload");
-            }
-            productService.uploadImage(imageFile);
-            return ResponseEntity.ok("Image uploaded successfully");
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image");
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile imageFile, @RequestParam("id") long id){
+        if (imageFile.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload");
         }
+        ProductDTO productDTO = productService.uploadImage(imageFile, id);
+        return ResponseEntity.ok(productDTO);
     }
 }

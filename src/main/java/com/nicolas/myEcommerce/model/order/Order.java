@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "order_details")
 @Data
-public class Detail {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,6 +20,6 @@ public class Detail {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "payment_id")
     private PaymentDetails paymentDetails;
-    @OneToMany(mappedBy = "orderDetail", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "orderDetails", cascade = CascadeType.REMOVE)
     private List<Item> orderItems;
 }
