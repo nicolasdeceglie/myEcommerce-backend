@@ -1,6 +1,6 @@
 package com.nicolas.myEcommerce.controller;
 
-import com.nicolas.myEcommerce.dto.OrderDTO;
+import com.nicolas.myEcommerce.dto.order.OrderDTO;
 import com.nicolas.myEcommerce.service.OrderService;
 import com.nicolas.myEcommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
+@RequestMapping("/api/v1")
+
 public class OrderController {
     @Autowired
     private OrderService orderService;

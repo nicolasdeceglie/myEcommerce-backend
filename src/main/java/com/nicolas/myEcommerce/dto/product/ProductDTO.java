@@ -1,10 +1,11 @@
-package com.nicolas.myEcommerce.dto;
+package com.nicolas.myEcommerce.dto.product;
 
+import com.nicolas.myEcommerce.dto.order.ItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,15 +15,13 @@ public class ProductDTO {
     private String name;
     private String description;
     private Double price;
-    private String imageUrl;
-    private String imageName;
     private boolean isAvailable;
     private Integer quantity;
-    private Date createdAt;
-    private Long categoryId;
-    private Long discountId;
-    private String categoryName;
-    private String discountName;
-    private Double discountPercent;
-
+    private String createdAt;
+    private String updatedAt;
+    private List<ImageDTO> images;
+    private ItemDTO orderItems;
+    private DiscountDTO discount;
+    private CategoryDTO category;
 }
+

@@ -20,6 +20,6 @@ public class Order {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "payment_id")
     private PaymentDetails paymentDetails;
-    @OneToMany(mappedBy = "orderDetails", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
     private List<Item> orderItems;
 }

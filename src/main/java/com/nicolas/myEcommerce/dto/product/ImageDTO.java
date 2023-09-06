@@ -1,4 +1,4 @@
-package com.nicolas.myEcommerce.dto;
+package com.nicolas.myEcommerce.dto.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDTO {
+public class ImageDTO {
     private Long id;
-    private Integer quantity;
-    private OrderDTO order;
+    private String name;
+    private String url;
     private ProductDTO product;
 }

@@ -24,8 +24,8 @@ import static org.springframework.security.web.csrf.CookieCsrfTokenRepository.wi
 public class MyEcommerceConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        CsrfTokenRequestAttributeHandler csrfToken =  new CsrfTokenRequestAttributeHandler();
-        csrfToken.setCsrfRequestAttributeName("_csrf");
+        //CsrfTokenRequestAttributeHandler csrfToken =  new CsrfTokenRequestAttributeHandler();
+        //csrfToken.setCsrfRequestAttributeName("_csrf");
 
         return http
                 .securityContext(s -> s.requireExplicitSave(false))
@@ -40,15 +40,15 @@ public class MyEcommerceConfiguration {
                     config.setMaxAge(3600L);
                     return config;
                 }))
-                .csrf(csrf -> csrf
-                        .csrfTokenRequestHandler(csrfToken)
-                        .ignoringRequestMatchers("/login", "/register", "/create-with-image")
-                        .csrfTokenRepository(withHttpOnlyFalse()))
-                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+                .csrf(csrf -> csrf.disable())
+                        //.csrfTokenRequestHandler(csrfToken)
+                        //.ignoringRequestMatchers("/login", "/register", "/create-with-image")
+                        //.csrfTokenRepository(withHttpOnlyFalse()))
+               // .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 //.addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
                 //.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(req ->
-                       req.requestMatchers(HttpMethod.POST, "/create-with-image").permitAll())
+                       req.requestMatchers( "/create-with-image", "api/v1/**").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .build();

@@ -33,9 +33,6 @@ public class LoginController {
         return service.findAll(pageIndex);
     }
 
-
-
-
     @GetMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO login(Authentication authentication){

@@ -1,5 +1,6 @@
-package com.nicolas.myEcommerce.model.product;
+package com.nicolas.myEcommerce.model.cart;
 
+import com.nicolas.myEcommerce.model.product.Product;
 import jakarta.persistence.*;
 import lombok.Data;
 

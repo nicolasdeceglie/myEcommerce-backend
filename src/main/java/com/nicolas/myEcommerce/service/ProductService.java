@@ -1,6 +1,6 @@
 package com.nicolas.myEcommerce.service;
 
-import com.nicolas.myEcommerce.dto.ProductDTO;
+import com.nicolas.myEcommerce.dto.product.ProductDTO;
 import com.nicolas.myEcommerce.exception.IdNotFoundException;
 import com.nicolas.myEcommerce.model.product.Image;
 import com.nicolas.myEcommerce.model.product.Product;
@@ -82,7 +82,7 @@ public class ProductService {
             image.setProduct(productToSave);
 
             productToSave.getImages().add(image);
-            productToSave.setUpdatedAt(new Date(System.currentTimeMillis()));
+            productToSave.setUpdatedAt(new Date(System.currentTimeMillis()).toString());
             productToSave = repository.save(productToSave);
         } catch (IOException e) {
             System.out.println("Exception occurred due to " + e.getMessage());
@@ -92,7 +92,7 @@ public class ProductService {
     @Transactional
     public ProductDTO createProductWithoutImage(ProductDTO productDTO) {
         Product productToSave = modelMapper.map(productDTO, Product.class);
-        productToSave.setCreatedAt(new Date(System.currentTimeMillis()));
+        productToSave.setCreatedAt(new Date(System.currentTimeMillis()).toString());
         productToSave = repository.save(productToSave);
         return modelMapper.map(productToSave, ProductDTO.class);
     }
@@ -111,7 +111,7 @@ public class ProductService {
             throw new IdNotFoundException("Product with ID " + id + " not found");
         }
         Product product = modelMapper.map(productToUpdate, Product.class);
-        product.setUpdatedAt(new Date(System.currentTimeMillis()));
+        product.setUpdatedAt(new Date(System.currentTimeMillis()).toString());
         product = repository.save(product);
         return modelMapper.map(product, ProductDTO.class);
     }
@@ -119,7 +119,7 @@ public class ProductService {
     public ProductDTO delete(long id) {
         ProductDTO productToDelete = getById(id);
         repository.deleteById(productToDelete.getId());
-        deleteImageFromStorage(productToDelete.getImage());
+        productToDelete.getImages().forEach(image -> deleteImageFromStorage(image.getUrl()));
         return productToDelete;
     }
 }

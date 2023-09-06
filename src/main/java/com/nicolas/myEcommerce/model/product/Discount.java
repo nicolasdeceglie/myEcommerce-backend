@@ -22,5 +22,5 @@ public class Discount {
     private Double discountPercent;
     private boolean isActive;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "discount")
-    private Set<Product> product;
+    private Set<Product> products;
 }
