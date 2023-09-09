@@ -4,6 +4,7 @@ import com.nicolas.myEcommerce.dto.product.ProductDTO;
 import com.nicolas.myEcommerce.exception.IdNotFoundException;
 import com.nicolas.myEcommerce.model.product.Image;
 import com.nicolas.myEcommerce.model.product.Product;
+import com.nicolas.myEcommerce.repository.ImageRepository;
 import com.nicolas.myEcommerce.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 public class ProductService {
     @Autowired
     private ProductRepository repository;
+    @Autowired
+    private ImageRepository imageService;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -52,6 +56,7 @@ public class ProductService {
     public ProductDTO createProductWithImage(ProductDTO productDTO, MultipartFile imageFile) {
         Product product = modelMapper.map(productDTO, Product.class);
         product = save(imageFile, product);
+        product = repository.findById(product.getId()).orElseThrow();
         return modelMapper.map(product, ProductDTO.class);
     }
     String saveImageToStorage(byte[] imageBytes, String fileName) {
@@ -73,22 +78,23 @@ public class ProductService {
             System.out.println("Exception occurred due to " + e.getMessage());
         }
     }
+
     private Product save(MultipartFile imageFile, Product productToSave) {
         Image image = new Image();
         try {
             String imageID = saveImageToStorage(imageFile.getBytes(), imageFile.getOriginalFilename());
             image.setUrl(imageID);
             image.setName(imageFile.getOriginalFilename());
-            image.setProduct(productToSave);
-
-            productToSave.getImages().add(image);
+            productToSave.addImage(image); // Use the addImage method here
             productToSave.setUpdatedAt(new Date(System.currentTimeMillis()).toString());
             productToSave = repository.save(productToSave);
+            imageService.save(image);
         } catch (IOException e) {
             System.out.println("Exception occurred due to " + e.getMessage());
         }
         return productToSave;
     }
+
     @Transactional
     public ProductDTO createProductWithoutImage(ProductDTO productDTO) {
         Product productToSave = modelMapper.map(productDTO, Product.class);

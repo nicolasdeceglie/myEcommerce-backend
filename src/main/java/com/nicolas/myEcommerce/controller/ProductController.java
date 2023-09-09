@@ -1,6 +1,7 @@
 package com.nicolas.myEcommerce.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicolas.myEcommerce.dto.product.ProductDTO;
 import com.nicolas.myEcommerce.service.ProductService;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProductController {
     @Autowired
     private ProductService productService;
@@ -35,7 +37,7 @@ public class ProductController {
         return productService.findAllSortedByNameDescending(pageIndex);
     }
 
-    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/create")
     @ResponseStatus(HttpStatus.CREATED)
     ResponseEntity<?> create(@RequestParam("product") String productJson, @RequestParam("image")MultipartFile imageFIle)  {
         try{
@@ -52,6 +54,24 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating product with image");
         }
     }
+
+
+    @PostMapping(value = "/createwo")
+    @ResponseStatus(HttpStatus.CREATED)
+    ResponseEntity<?> createwoImage(@RequestParam("product") String productJson)  {
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            ProductDTO productDTO = objectMapper.readValue(productJson, ProductDTO.class);
+
+            productDTO = productService.createProductWithoutImage(productDTO);
+            return ResponseEntity.ok(productDTO);
+        }catch (JsonProcessingException e){
+            System.out.println("Exception occurred due to " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating product with image");
+        }
+    }
+
+
     @PutMapping("/products/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ProductDTO update(@RequestBody ProductDTO productToUpdate, @PathVariable("id") long id){

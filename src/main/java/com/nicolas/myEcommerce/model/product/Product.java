@@ -1,16 +1,23 @@
 package com.nicolas.myEcommerce.model.product;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nicolas.myEcommerce.model.order.Item;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "products")
 @Data
-public class Product {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,4 +38,9 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "category_id")
     private Category category;
+    public void addImage(Image image) {
+        images = new ArrayList<>();
+        images.add(image);
+        image.setProduct(this);
+    }
 }

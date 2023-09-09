@@ -4,7 +4,6 @@ import com.nicolas.myEcommerce.dto.UserDTO;
 import com.nicolas.myEcommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,12 +32,12 @@ public class LoginController {
         return service.findAll(pageIndex);
     }
 
-    @GetMapping("/login")
+    /*@GetMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO login(Authentication authentication){
         return service.findByEmail(authentication.getName());
     }
-
+*/
     @PutMapping("/user/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO update(@RequestBody UserDTO userToUpdate, @PathVariable("id") long id){

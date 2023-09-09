@@ -9,8 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -21,19 +20,17 @@ public class UserService {
     private UserRepository repository;
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
     @Transactional
     public UserDTO register(UserDTO userToRegister){
-        String hashPwd = passwordEncoder.encode(userToRegister.getPassword());
-        userToRegister.setPassword(hashPwd);
+//        String hashPwd = passwordEncoder.encode(userToRegister.getPassword());
+  //      userToRegister.setPassword(hashPwd);
         userToRegister.setCreateDate(String.valueOf(new Date(System.currentTimeMillis())));
         User savedUser = modelMapper.map(userToRegister, User.class);
         repository.save(savedUser);
         return modelMapper.map(savedUser, UserDTO.class);
     }
     User findById(long id){
-        return repository.findById(id).orElseThrow(() -> new BadCredentialsException("User not found"));
+        return repository.findById(id).orElseThrow(() -> new IdNotFoundException("User not found"));
     }
 
     public List<UserDTO> findAll(int pageIndex) {
@@ -43,7 +40,7 @@ public class UserService {
     }
 
     public UserDTO findByEmail(String email) {
-        return modelMapper.map(repository.findByEmail(email).orElseThrow(() -> new BadCredentialsException("User not found")), UserDTO.class);
+        return modelMapper.map(repository.findByEmail(email).orElseThrow(() -> new IdNotFoundException("User not found")), UserDTO.class);
     }
     @Transactional
     public UserDTO update(UserDTO userToUpdate, long id){
